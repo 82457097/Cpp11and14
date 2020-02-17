@@ -5,7 +5,7 @@ C++11/14新特性
 - constexpr
 - auto
 自动类型推导关键字
-eg：\n
+eg：<\br>
 未使用auto   for(vector<int>::const_iterator itr = vec.cbegin(); itr != vec.cend(); ++itr)
 使用auto    for(auto itr = vec.cbegin(); itr != vec.cend(); ++itr);
 auto i = 5;             // i 被推导为 int
