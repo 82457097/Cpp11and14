@@ -29,6 +29,9 @@ int main() {
 - 委托构造
 C++ 11 引入了委托构造的概念，这使得构造函数可以在同一个类中一个构造函数调用另一个构造函数，从而达到简化代码的目的：
 
+- 继承构造
+在传统 C++ 中，构造函数如果需要继承是需要将参数一一传递的，这将导致效率低下。C++ 11 利用关键字 using 引入了继承构造函数的概念：
+
 ## 模板增强
 ### 类型别名模板
 - 在了解类型别名模板之前，需要理解『模板』和『类型』之间的不同。仔细体会这句话：模板是用来产生类型的。在传统 C++中，typedef 可以为类型定义一个新的名称，但是却没有办法为模板定义一个新的名称。因为，模板不是类型。
@@ -122,6 +125,82 @@ auto print(T value, Args... args) {
 }
 int main() {
     print(1, 2.1, "123");
+    return 0;
+}
+```
+通过初始化列表，(lambda 表达式, value)... 将会被展开。由于逗号表达式的出现，首先会执行前面的 lambda 表达式，完成参数的输出。唯一不美观的地方在于如果不使用 return 编译器会给出未使用的变量作为警告。
+
+
+## lambda表达式
+```cpp
+[捕获列表](参数列表) mutable(可选) 异常属性 -> 返回类型 {
+    // 函数体
+}
+```
+1. 值捕获
+
+与参数传值类似，值捕获的前期是变量可以拷贝，不同之处则在于，被捕获的变量在 lambda 表达式被创建时拷贝，而非调用时才拷贝：
+```cpp
+void learn_lambda_func_1() {
+    int value_1 = 1;
+    auto copy_value_1 = [value_1] {
+        return value_1;
+    };
+    value_1 = 100;
+    auto stored_value_1 = copy_value_1();
+    // 这时, stored_value_1 == 1, 而 value_1 == 100.
+    // 因为 copy_value_1 在创建时就保存了一份 value_1 的拷贝
+    cout << "value_1 = " << value_1 << endl;
+    cout << "stored_value_1 = " << stored_value_1 << endl;
+}
+```
+
+2. 引用捕获
+
+与引用传参类似，引用捕获保存的是引用，值会发生变化。
+```cpp
+void learn_lambda_func_2() {
+    int value_2 = 1;
+    auto copy_value_2 = [&value_2] {
+        return value_2;
+    };
+    value_2 = 100;
+    auto stored_value_2 = copy_value_2();
+    // 这时, stored_value_2 == 100, value_1 == 100.
+    // 因为 copy_value_2 保存的是引用
+    cout << "value_2 = " << value_2 << endl;
+    cout << "stored_value_2 = " << stored_value_2 << endl;
+}
+```
+3. 隐式捕获
+
+手动书写捕获列表有时候是非常复杂的，这种机械性的工作可以交给编译器来处理，这时候可以在捕获列表中写一个 & 或 = 向编译器声明采用 引用捕获或者值捕获.
+
+总结一下，捕获提供了 Lambda 表达式对外部值进行使用的功能，捕获列表的最常用的四种形式可以是：
+
+[] 空捕获列表
+[name1, name2, ...] 捕获一系列变量
+[&] 引用捕获, 让编译器自行推导捕获列表
+[=] 值捕获, 让编译器执行推导应用列表
+
+
+- std::function
+
+Lambda 表达式的本质是一个函数对象，当 Lambda 表达式的捕获列表为空时，Lambda 表达式还能够作为一个函数指针进行传递，例如：
+```cpp
+#include <iostream>
+
+using foo = void(int);  // 定义函数指针, using 的使用见上一节中的别名语法
+void functional(foo f) {
+    f(1);
+}
+
+int main() {
+    auto f = [](int value) {
+        std::cout << value << std::endl;
+    };
+    functional(f);  // 函数指针调用
+    f(1);           // lambda 表达式调用
     return 0;
 }
 ```
