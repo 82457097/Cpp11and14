@@ -1,15 +1,15 @@
 # Cpp11and14
 C++11/14新特性
 
-- nullptr
-- constexpr
-- auto
- - 自动类型推导关键字
- - eg：
-  - 未使用auto   for(vector<int>::const_iterator itr = vec.cbegin(); itr != vec.cend(); ++itr)
-  - 使用auto    for(auto itr = vec.cbegin(); itr != vec.cend(); ++itr);
-  - auto i = 5;             // i 被推导为 int
-  - auto arr = new auto(10) // arr 被推导为 int *
+### nullptr
+### constexpr
+### auto
+- 自动类型推导关键字
+- eg：
+ - 未使用auto   for(vector<int>::const_iterator itr = vec.cbegin(); itr != vec.cend(); ++itr)
+ - 使用auto    for(auto itr = vec.cbegin(); itr != vec.cend(); ++itr);
+ - auto i = 5;             // i 被推导为 int
+ - auto arr = new auto(10) // arr 被推导为 int *
 
 ```cpp
 #include <iostream>
